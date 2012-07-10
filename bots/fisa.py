@@ -1,8 +1,7 @@
-#-*- coding: utf-8 *-*
+# -*- coding: utf-8 *-*
 from bunch import bunchify
 import random
 import cmath
-import os
 
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
@@ -18,7 +17,6 @@ SEARCH_THROTTLES = 20
 SEARCH_TURNS = 3
 MAX_SPEED = 15
 WALL_SAFE_DISTANCE = 20
-USE_FREEZE_RAY = True
 
 
 class FisaBotClient(ClientBase):
@@ -72,21 +70,10 @@ class FisaBotClient(ClientBase):
                           not self.wall_between(obj.position)]
 
             if enemies:
-                if USE_FREEZE_RAY:
-                    for e in enemies:
-                        try:
-                            ps = os.popen('ps fx').read()
-                            p_id = [l.strip().split()[0]
-                                    for l in ps.split('\n')
-                                    if 'python bots/%s' % e.name in l]
-                            if p_id:
-                                os.popen('kill -STOP %s' % p_id[0]).read()
-                        except:
-                            pass
-
                 # pick closest
                 e = sorted([(self.pos.distance(e.position), e)
                             for e in enemies])[0][1]
+
                 # shoot the enemy
                 self.point_and_shoot(e)
 
