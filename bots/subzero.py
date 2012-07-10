@@ -2,6 +2,7 @@
 import os
 import sys
 import inspect
+from bunch import bunchify
 
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
@@ -15,24 +16,30 @@ class SubZeroBotClient(FisaBotClient):
     def __init__(self):
         FisaBotClient.__init__(self)
         self.bot_files = get_bot_files_by_name()
+        self.frozen = []
 
     def messageReceived(self, msg):
         FisaBotClient.messageReceived(self, msg)
-            # find enemies
-        enemies = [obj for obj in self.radar
-                   if obj.object_type == 'player']
+        msg = bunchify(msg)
 
-        if enemies:
-            for e in enemies:
-                try:
-                    ps = os.popen('ps fx').read()
-                    p_id = [l.strip().split()[0]
-                            for l in ps.split('\n')
-                            if 'python bots/%s' % self.bot_files[e.name] in l]
-                    if p_id:
-                        os.popen('kill -STOP %s' % p_id[0]).read()
-                except:
-                    pass
+        if msg.type == 'sensor':
+            # find enemies
+            enemies = [obj for obj in self.radar
+                       if obj.object_type == 'player' and \
+                          obj.name not in self.frozen]
+
+            if enemies:
+                for e in enemies:
+                    try:
+                        ps = os.popen('ps fx').read()
+                        p_id = [l.strip().split()[0]
+                                for l in ps.split('\n')
+                                if 'python bots/%s' % self.bot_files[e.name] in l]
+                        if p_id:
+                            os.popen('kill -STOP %s' % p_id[0]).read()
+                            self.frozen.append(e.name)
+                    except:
+                        pass
 
 
 def get_bot_files_by_name():
