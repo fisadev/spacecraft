@@ -13,11 +13,11 @@ class SubZeroBotClient(FisaBotClient):
     name = 'SubZero'
 
     def __init__(self):
-        super(SubZeroBotClient, self).__init__()
+        FisaBotClient.__init__(self)
         self.bot_files = get_bot_files_by_name()
 
     def messageReceived(self, msg):
-        super(SubZeroBotClient, self).messageReceived(msg)
+        FisaBotClient.messageReceived(self, msg)
             # find enemies
         enemies = [obj for obj in self.radar
                    if obj.object_type == 'player']
