@@ -6,7 +6,7 @@ import inspect
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 
-from spacecraft.bots.fisa import FisaBotClient
+from fisa import FisaBotClient
 
 
 class SubZeroBotClient(FisaBotClient):
