@@ -59,13 +59,13 @@ class FisaBotClient(ClientBase):
             self.vel = Vector2(*msg.gps.velocity)
             self.angle = msg.gps.angle
 
-            radar = [obj for obj in msg.proximity]
-            for x in radar:
+            self.radar = [obj for obj in msg.proximity]
+            for x in self.radar:
                 x.position = Point2(*x.position)
                 x.velocity = Vector2(*x.velocity)
 
             # find enemies
-            enemies = [obj for obj in radar
+            enemies = [obj for obj in self.radar
                        if obj.object_type == 'player' and \
                           not self.wall_between(obj.position)]
 
@@ -79,7 +79,7 @@ class FisaBotClient(ClientBase):
 
             else:
                 # find bullets
-                bullets = [obj for obj in radar
+                bullets = [obj for obj in self.radar
                            if obj.object_type == 'bullet' and \
                               not self.wall_between(obj.position)]
                 incoming = []
